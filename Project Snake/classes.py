@@ -36,6 +36,10 @@ class Snake:
         # Tjek om hovedet er uden for banen
         return not (0 <= head_x < cols and 0 <= head_y < rows)
     
+    def grid(self):
+        cols = WIDTH // TITLE_SIZE
+        rows = HEIGHT // TITLE_SIZE
+    
 
 class Fruits:
     def __init__(self, snake_body):
