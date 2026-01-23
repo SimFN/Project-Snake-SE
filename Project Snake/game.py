@@ -1,5 +1,5 @@
 from classes import Snake, Fruits, GameStats
-from konstanter import WIDTH, HEIGHT, TITLE_SIZE, FPS
+from konstanter import WIDTH, HEIGHT, TITLE_SIZE, SPEED
 
 class Game:
     def __init__(self):
@@ -29,17 +29,15 @@ class Game:
         self.running = True
     
     def update(self):
-        # Opdaterer logik pr. frame
-        while True:
-            # Tjek om slangen sluger frugt
-            if self.snake.body[0] == self.fruit.position:
-                self.stats.increase_score()
-                self.snake.move(Grow=True)
-                self.fruit = Fruits(self.snake.body)
-            else:
-                self.snake.move(Grow=False)
+        # Tjek om slangen sluger frugt
+        if self.snake.body[0] == self.fruit.position:
+            self.stats.increase_score()
+            self.snake.move(Grow=True)
+            self.fruit = Fruits(self.snake.body)
+        else:
+            self.snake.move(Grow=False)
 
-            # Tjek for kollisioner
-            if self.snake.collides_with_self() or self.snake.collides_with_wall():
-                self.stats.game_over = True
-                self.running = False
+        # Tjek for kollisioner
+        if self.snake.collides_with_self() or self.snake.collides_with_wall():
+            self.stats.game_over = True
+            self.running = False
