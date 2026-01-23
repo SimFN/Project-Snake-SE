@@ -42,15 +42,7 @@ def main():
 
         if not game.stats.game_over:
             game.snake.move()
-
-            if game.snake.body[0] == game.fruit.position:
-                game.snake.move(Grow=True)
-                game.stats.increase_score()
-                game.fruit = Fruits(game.snake.body)
-
-            if game.snake.collides_with_self() or game.snake.collides_with_wall():
-                game.stats.game_over = True
-
+ 
         screen.fill(BACKGROUND_COLOR)
         draw_snake(screen, game.snake)
         draw_fruit(screen, game.fruit)
