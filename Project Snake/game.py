@@ -28,11 +28,6 @@ class Game:
 
         self.fruit = Fruits(self.snake.body)
         self.running = True
-
-    def handle_input(self):
-        # Direction kommer til at stamme fra main.py filen ved brug af pygame
-        # og ser ud som fx (-1, 0), (0, 1) osv.
-        self.snake.change_direction(direction)
     
     def update(self):
         # Opdaterer logik pr. frame
