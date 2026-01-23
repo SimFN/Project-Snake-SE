@@ -1,72 +1,47 @@
-import random
-from konstanter import WIDTH, HEIGHT, TITLE_SIZE
+import pygame
+from classes import Snake, Fruits, GameStats
+from konstanter import WIDTH, HEIGHT, TITLE_SIZE, FPS
 
-class Snake:
-    def __init__(self, start_pos):
-        # Startposition
-        self.body = [start_pos]
-        self.direction = (1, 0)  # Bevæger sig til højre når spillet starter
 
-    def change_direction(self, new_direction):
-        # For at undgå at vende 180 grader:
-        if (new_direction[0] == -self.direction[0] and new_direction[1] == -self.direction[1]):
-            return
-        self.direction = new_direction
-
-    def move(self, Grow=False):
-        head_x, head_y = self.body[0]
-        dx, dy = self.direction
-        new_head = (head_x + dx, head_y + dy)
-        # Nyt hoved tilføjes
-        self.body.insert(0, new_head)
-        # Hvis slangen ikke skal vokse, fjernes halen
-        if not Grow:
-            self.body.pop()
-
-    def collides_with_self(self):
-        # Definer hvornår slangen rammer sig selv
-        return self.body[0] in self.body[1:]
-    
-    def collides_with_wall(self):
-        # Definer hvornår slangen rammer en væg
-        head_x, head_y = self.body[0]
-        cols = WIDTH // TITLE_SIZE
-        rows = HEIGHT // TITLE_SIZE
-
-        # Tjek om hovedet er uden for banen
-        return not (0 <= head_x < cols and 0 <= head_y < rows)
-    
-
-class Fruits:
-    def __init__(self, snake_body):
-        self.position = self.spawn(snake_body)
-
-    def spawn(self, snake_body):
-        # Definer hvordan frugter spawner
-        cols = WIDTH // TITLE_SIZE
-        rows = HEIGHT // TITLE_SIZE
-
-        while True:
-            pos = (
-                random.randint(0, cols - 1),
-                random.randint(0, rows - 1)
-            )
-            if pos not in snake_body:
-                return pos
-            
-class GameStats:
+class Game:
     def __init__(self):
-        self.score = 0
-        self.highscore = 0
-        self.game_over = False
+        # Opret stats
+        self.stats = GameStats()
+
+        # Opret slangen midt på banen
+        start_x = (WIDTH // TITLE_SIZE) // 2
+        start_y = (HEIGHT // TITLE_SIZE) // 2
+        self.snake = Snake((start_x, start_y))
+        
+        # Opret første frugt
+        self.fruit = Fruits(self.snake.body)
+
+        # Spillet skal køre
+        self.running = True
 
     def reset(self):
-        # Ændrer variable tilbage ved genstart
-        self.score = 0
-        self.game_over = False
+        # Genstart spillet
+        self.stats.reset()
 
-    def increase_score(self):
-        # Definer at score kan stige
-        self.score += 1
-        if self.score > self.highscore:
-            self.highscore = self.score
+        start_x = (WIDTH // TITLE_SIZE) // 2
+        start_y = (HEIGHT // TITLE_SIZE) // 2
+        self.snake = Snake((start_x, start_y))
+
+        self.fruit = Fruits(self.snake.body)
+        self.running = True
+    
+    def update(self):
+        #Opdaterer spillets logik én gang per frame
+
+        # Tjek om slangen spiser frugten
+        if self.snake.body[0] == self.fruit.position:
+            self.stats.increase_score()
+            self.snake.move(Grow=True)
+            self.fruit = Fruits(self.snake.body)
+        else:
+            self.snake.move(Grow=False)
+
+        # Tjek for kollisioner
+        if self.snake.collides_with_self() or self.snake.collides_with_wall():
+            self.stats.game_over = True
+            self.running = False
